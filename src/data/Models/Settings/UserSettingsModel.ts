@@ -7,6 +7,7 @@ interface BasicSettings {
     enable_find: boolean;
     language_override: LanguageOverride;
     content_output: ContentOutput;
+    default_city: string | null;
 }
 
 interface RenderSettings {
@@ -100,8 +101,9 @@ export class UserSettingsModel {
                  experimental_renderer = $15,
                  language_override     = $16,
                  content_output        = $17,
-                 enable_find          = $18
-             WHERE user_id = $19`,
+                 enable_find          = $18,
+                 default_city         = $19
+             WHERE user_id = $20`,
             [
                 settings.render_enabled,
                 settings.ordr_skin,
@@ -121,6 +123,7 @@ export class UserSettingsModel {
                 settings.language_override,
                 settings.content_output,
                 settings.enable_find,
+                settings.default_city,
                 settings.user_id,
             ]
         );

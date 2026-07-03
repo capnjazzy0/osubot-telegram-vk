@@ -250,9 +250,10 @@ export class Bot {
         const ctx = this.buildContext(context);
         await ctx.ensureUserInfoUpdated();
 
+        ctx.applyTextOverrides(this.commandAliases);
+
         if (await ctx.checkFeature("plaintext-overrides")) {
             ctx.applyTextOverrides(this.okiChanAliases);
-            ctx.applyTextOverrides(this.commandAliases);
         }
 
         this.totalMessages++;

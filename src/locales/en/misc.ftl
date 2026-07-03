@@ -96,3 +96,58 @@ osutrack-rank-pp = Rank: {$rank} ({$pp} pp) in {$playcount ->
     [one] {$playcount} play
     *[other] {$playcount} plays
 }
+
+weather-city-required = Specify a city!
+weather-city-not-found = City "{$city}" not found!
+weather-error = Failed to get weather data. Try again later.
+weather-output =
+    📍 {$city}
+    🌡 Now: {$temp}°C
+    🤗 Feels like: {$feels}°C
+    ☁️ Weather: {$desc}
+    💧 Humidity: {$humidity}%
+    💨 Wind: {$wind} m/s
+    🕒 Next hours:
+    {$hour1} — {$temp1}°C
+    {$hour2} — {$temp2}°C
+    {$hour3} — {$temp3}°C
+    📅 Forecast:
+    Tomorrow — {$day1}°C
+    Day after — {$day2}°C
+    In 3 days — {$day3}°C
+
+lang-set = Language changed to {$lang}
+lang-usage = Specify a language: !lang ru / en / zh / auto
+
+city-set = Default city set to {$city}
+city-current = Default city: {$city}
+city-none = No default city set. Use !city <name> to set one.
+
+wmo-0 = Clear sky
+wmo-1 = Mainly clear
+wmo-2 = Partly cloudy
+wmo-3 = Overcast
+wmo-45 = Foggy
+wmo-48 = Depositing rime fog
+wmo-51 = Light drizzle
+wmo-53 = Moderate drizzle
+wmo-55 = Dense drizzle
+wmo-56 = Light freezing drizzle
+wmo-57 = Dense freezing drizzle
+wmo-61 = Slight rain
+wmo-63 = Moderate rain
+wmo-65 = Heavy rain
+wmo-66 = Light freezing rain
+wmo-67 = Heavy freezing rain
+wmo-71 = Slight snow
+wmo-73 = Moderate snow
+wmo-75 = Heavy snow
+wmo-77 = Snow grains
+wmo-80 = Slight rain showers
+wmo-81 = Moderate rain showers
+wmo-82 = Violent rain showers
+wmo-85 = Slight snow showers
+wmo-86 = Heavy snow showers
+wmo-95 = Thunderstorm
+wmo-96 = Thunderstorm with slight hail
+wmo-99 = Thunderstorm with heavy hail

@@ -93,3 +93,58 @@ osutrack-and-scores-more = 以及另外 { $count ->
 *[other] {$count} 个成绩
 }...
 osutrack-rank-pp = 排名：{$rank}（{$pp} pp）｜游戏次数：{$playcount} 次
+
+weather-city-required = 请指定城市！
+weather-city-not-found = 未找到城市 "{$city}"！
+weather-error = 获取天气数据失败，请稍后再试。
+weather-output =
+    📍 {$city}
+    🌡 现在：{$temp}°C
+    🤗 体感：{$feels}°C
+    ☁️ 天气：{$desc}
+    💧 湿度：{$humidity}%
+    💨 风速：{$wind} m/s
+    🕒 未来时段：
+    {$hour1} — {$temp1}°C
+    {$hour2} — {$temp2}°C
+    {$hour3} — {$temp3}°C
+    📅 预报：
+    明天 — {$day1}°C
+    后天 — {$day2}°C
+    3天后 — {$day3}°C
+
+lang-set = 语言已更改为 {$lang}
+lang-usage = 请指定语言：!lang ru / en / zh / auto
+
+city-set = 默认城市已设置为 {$city}
+city-current = 默认城市：{$city}
+city-none = 尚未设置默认城市。请使用 !city <名称> 进行设置。
+
+wmo-0 = 晴天
+wmo-1 = 大部晴朗
+wmo-2 = 局部多云
+wmo-3 = 阴天
+wmo-45 = 雾
+wmo-48 = 雾凇
+wmo-51 = 小毛毛雨
+wmo-53 = 中毛毛雨
+wmo-55 = 大毛毛雨
+wmo-56 = 小冻毛毛雨
+wmo-57 = 大冻毛毛雨
+wmo-61 = 小雨
+wmo-63 = 中雨
+wmo-65 = 大雨
+wmo-66 = 小冻雨
+wmo-67 = 大冻雨
+wmo-71 = 小雪
+wmo-73 = 中雪
+wmo-75 = 大雪
+wmo-77 = 雪粒
+wmo-80 = 小阵雨
+wmo-81 = 中阵雨
+wmo-82 = 大阵雨
+wmo-85 = 小阵雪
+wmo-86 = 大阵雪
+wmo-95 = 雷暴
+wmo-96 = 雷暴伴小冰雹
+wmo-99 = 雷暴伴大冰雹

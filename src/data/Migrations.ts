@@ -612,6 +612,14 @@ const migrations: IMigration[] = [
             return true;
         },
     },
+    {
+        version: 30,
+        name: "Add default_city to settings",
+        process: async (db: Database) => {
+            await db.run(`ALTER TABLE settings ADD COLUMN default_city TEXT DEFAULT NULL`);
+            return true;
+        },
+    },
 ];
 
 export async function applyMigrations(db: Database) {
