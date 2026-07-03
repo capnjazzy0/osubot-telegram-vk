@@ -506,7 +506,14 @@ export default class UnifiedMessageContext implements ILocalisator {
                 ...(attachment ? { attachment } : {}),
             });
         } catch (e) {
-            global.logger.error(e);
+            global.logger.warn("edit failed, falling back to send:", e);
+            await this.vk.api.messages.send({
+                peer_id: this.chatId,
+                message: text,
+                random_id: Date.now(),
+                ...(keyboard ? { keyboard } : {}),
+                ...(attachment ? { attachment } : {}),
+            });
         }
     }
 
@@ -526,8 +533,13 @@ export default class UnifiedMessageContext implements ILocalisator {
                 keyboard: kb,
             });
         } catch (e) {
-            global.logger.error(e);
-            return undefined;
+            global.logger.warn("editMarkup failed, falling back to send:", e);
+            return await this.vk.api.messages.send({
+                peer_id: this.chatId,
+                message: text ?? "",
+                random_id: Date.now(),
+                keyboard: kb,
+            });
         }
     }
 

@@ -194,13 +194,13 @@ export class Bot {
     }
 
     private handleMessageEvent = async (context: MessageEventContext): Promise<void> => {
-        global.logger.info("handleMessageEvent fired", { userId: context.userId, peerId: context.peerId, payload: context.eventPayload });
+        await context.answer({ type: "show_snackbar", text: "" }).catch(() => global.logger.error("Failed to answer message_event"));
+
         try {
             const ctx = this.buildContext(context);
             await ctx.ensureUserInfoUpdated();
             await this.database.statsModel.logMessage(ctx);
             await this.processCommands(ctx);
-            await context.answer({ type: "show_snackbar", text: "" });
         } catch (e) {
             global.logger.error("handleMessageEvent error:", e);
         }
