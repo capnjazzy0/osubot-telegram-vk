@@ -1,11 +1,4 @@
-import { Bot as TelegramBot, GrammyError, HttpError, webhookCallback } from "grammy";
-import { autoRetry } from "@grammyjs/auto-retry";
-import { chatMemberFilter } from "@grammyjs/chat-members";
-import { run, RunnerHandle } from "@grammyjs/runner";
-import { UserFromGetMe } from "@grammyjs/types";
-import { hydrateFiles } from "@grammyjs/files";
-import { limit } from "@grammyjs/ratelimiter";
-import { I18n } from "@grammyjs/i18n";
+import { VK, MessageContext, MessageEventContext, Updates } from "vk-io";
 import express, { Request, Response } from "express";
 import * as promClient from "prom-client";
 import { Module } from "./telegram_event_handlers/modules/Module";
@@ -25,7 +18,8 @@ import BeatLeader from "./telegram_event_handlers/modules/BeatLeader";
 import ScoreSaber from "./telegram_event_handlers/modules/ScoreSaber";
 import OsuTrackAPI from "./osu_specific/OsuTrackAPI";
 import IgnoreList from "./Ignore";
-import UnifiedMessageContext, { TgApi, TgContext } from "./TelegramSupport";
+import UnifiedMessageContext from "./TelegramSupport";
+import { initI18n } from "./TelegramSupport";
 import { OsuBeatmapProvider } from "./beatmaps/osu/OsuBeatmapProvider";
 import BanchoAPIV2 from "./api/BanchoV2";
 import { SimpleCommandsModule } from "./telegram_event_handlers/modules/simple_commands";
@@ -39,8 +33,9 @@ import { ReplyUtils } from "./telegram_event_handlers/utils/ReplyUtils";
 import { Command } from "./telegram_event_handlers/Command";
 
 export interface IBotConfig {
-    tg: {
+    vk: {
         token: string;
+        groupId: number;
         owner: number;
     };
     tokens: {
@@ -54,16 +49,16 @@ export type PendingCallback = (ctx: UnifiedMessageContext) => Promise<ShouldRemo
 
 export class Bot {
     public readonly config: IBotConfig;
-    public readonly tg: TelegramBot;
-    public readonly database: Database; // TODO: make private
+    public readonly vk: VK;
+    public readonly database: Database;
     public readonly api: APICollection;
-    public readonly osuBeatmapProvider: OsuBeatmapProvider; // TODO: move somewhere out of there
+    public readonly osuBeatmapProvider: OsuBeatmapProvider;
     public readonly templates: ITemplates = Templates;
     public readonly maps: Maps;
     public readonly ignored: IgnoreList;
     public readonly track: OsuTrackAPI;
 
-    public readonly banchoApi: BanchoAPIV2; // TODO: make private
+    public readonly banchoApi: BanchoAPIV2;
 
     public readonly okiChanCards: OkiCardsGenerator = new OkiCardsGenerator();
 
@@ -74,29 +69,27 @@ export class Bot {
     public modules: Module[] = [];
     public startTime: number = 0;
     private totalMessages: number = 0;
-    public me: UserFromGetMe;
+    public me: { id: number; name: string };
     public readonly version: string;
-
-    public readonly useLocalApi = process.env.TELEGRAM_USE_LOCAL_API === "true";
 
     private readonly useWebhooks = process.env.USE_WEBHOOKS === "true";
 
-    private handle: RunnerHandle;
+    private updates: Updates;
     private expressApp: express;
 
     private _initializationPromise: Promise<void>;
 
     constructor(config: IBotConfig) {
         this.config = config;
-        global.logger.info("Set owner id: ", config.tg.owner);
+        global.logger.info("Set owner id: ", config.vk.owner);
 
-        const apiRoot = this.useLocalApi ? process.env.TELEGRAM_LOCAL_API_HOST : undefined;
-        this.tg = new TelegramBot<TgContext, TgApi>(config.tg.token, {
-            client: {
-                apiRoot,
-            },
+        this.vk = new VK({
+            token: config.vk.token,
+            pollingGroupId: config.vk.groupId,
+            apiMode: "sequential",
         });
-        this.database = new Database(this.tg, config.tg.owner);
+
+        this.database = new Database(this.vk, config.vk.owner);
         this.ignored = new IgnoreList(this.database);
 
         this.banchoApi = new BanchoAPIV2(this);
@@ -110,19 +103,20 @@ export class Bot {
 
         this.replyUtils = new ReplyUtils(this.okiChanCards, this.templates, this.database.covers);
 
+        this.updates = this.vk.updates;
+
         this._initializationPromise = this.initialize();
     }
 
-    private buildContext(ctx: TgContext): UnifiedMessageContext {
-        return new UnifiedMessageContext(ctx, this.config.tg.owner, this.me, this.useLocalApi, this.database);
+    private buildContext(ctx: MessageContext | MessageEventContext): UnifiedMessageContext {
+        return new UnifiedMessageContext(ctx, this.config.vk.owner, this.me, this.vk, this.database);
     }
 
     private async initialize(): Promise<void> {
+        await initI18n(path.join("./src", "locales"));
         await this.setupDatabase();
         this.registerModules();
         this.setupBot();
-        this.setupErrorHandling();
-        this.configureCommandAliases();
         this.setupEventHandlers();
     }
 
@@ -149,122 +143,66 @@ export class Bot {
     }
 
     private setupBot(): void {
-        const i18n = new I18n<TgContext>({
-            defaultLocale: "en",
-            useSession: false,
-            directory: path.join("./src", "locales"),
-            globalTranslationContext(ctx) {
-                return {
-                    first_name: ctx.from?.first_name ?? "",
-                    last_name: ctx.from?.last_name ?? "",
-                    user_mention: ctx.from.username ? `@${ctx.from.username}` : (ctx.from?.last_name ?? ""),
-                };
-            },
-        });
+        const rateLimitMap = new Map<number, number[]>();
 
-        this.tg.use(i18n);
-        this.tg.use(
-            limit({
-                timeFrame: 5000,
-                limit: 3,
-                onLimitExceeded: async (tgCtx: TgContext) => {
-                    const ctx = this.buildContext(tgCtx);
-                    await ctx.ensureUserInfoUpdated();
-                    await ctx.activateLocalisator();
-                    await this.database.statsModel.logMessage(ctx);
-                    if (ctx.messagePayload) {
-                        await ctx.answer(ctx.tr("too-fast-notification"));
-                        await tgCtx.answerCallbackQuery();
-                    } else {
-                        await ctx.reply(ctx.tr("too-fast-commands-text"));
-                    }
-                },
-                keyGenerator: (tgCtx: TgContext) => {
-                    const ctx = this.buildContext(tgCtx);
+        this.updates.on("message", async (messageCtx: MessageContext) => {
+            const now = Date.now();
+            const window = 5000;
+            const limit = 3;
 
-                    let isCommand = !!this.pendingCallbacks[this.createCallbackTicket(ctx)];
+            const timestamps = rateLimitMap.get(messageCtx.senderId) ?? [];
+            const recent = timestamps.filter((t) => now - t < window);
+            recent.push(now);
+            rateLimitMap.set(messageCtx.senderId, recent);
 
-                    if (!isCommand) {
-                        for (const module of this.modules) {
-                            const match = module.checkContext(ctx);
-                            if (match) {
-                                isCommand = true;
-                                break;
-                            }
-                        }
-                    }
+            if (recent.length > limit) {
+                const ctx = this.buildContext(messageCtx);
+                await ctx.ensureUserInfoUpdated();
+                await ctx.activateLocalisator();
+                await this.database.statsModel.logMessage(ctx);
+                await ctx.reply(ctx.tr("too-fast-commands-text"));
+                return;
+            }
 
-                    let ticket = "command";
-                    if (!isCommand) {
-                        ticket = `${Date.now()}:${Math.random()}:${this.totalMessages}`;
-                    }
-                    return `${ctx.senderId}:${ticket}`;
-                },
-            })
-        );
-        this.tg.api.config.use(hydrateFiles(this.tg.token));
-    }
-
-    private setupErrorHandling(): void {
-        this.tg.catch((err) => {
-            const ctx = err.ctx;
-            console.error(`Error handling update ${ctx.update.update_id}:`);
-
-            if (err.error instanceof GrammyError) {
-                console.error("Telegram API error:", err.error.description);
-            } else if (err.error instanceof HttpError) {
-                console.error("HTTP error:", err.error);
-            } else {
-                console.error("Unexpected error:", err.error);
+            try {
+                await this.handleMessage(messageCtx);
+            } catch (e) {
+                global.logger.error("Unhandled message error:", e);
             }
         });
-
-        this.tg.api.config.use(autoRetry());
     }
 
     private setupEventHandlers(): void {
-        const groups = this.tg.chatType(["group", "supergroup"]);
-        groups.filter(chatMemberFilter("out", "in"), this.handleNewChatMember);
-        groups.filter(chatMemberFilter("in", "out"), this.handleLeftChatMember);
+        this.updates.on("message_event", this.handleMessageEvent);
 
-        groups.on("message:new_chat_members", this.handleNewChatMembers);
+        this.updates.on("message", async (messageCtx: MessageContext) => {
+            if (messageCtx.isChat && messageCtx.isEvent) {
+                const eventType = messageCtx.eventType;
+                const userId = messageCtx.eventMemberId;
+                if (!userId) return;
 
-        this.tg.on("callback_query:data", this.handleCallbackQuery);
-        this.tg.on("message", this.handleMessage);
+                if (eventType === "chat_invite_user" || eventType === "chat_invite_user_by_link") {
+                    const inChat = await this.database.chats.isUserInChat(userId, messageCtx.peerId);
+                    if (!inChat) {
+                        await this.database.chats.userJoined(userId, messageCtx.peerId);
+                    }
+                } else if (eventType === "chat_kick_user") {
+                    await this.database.chats.userLeft(userId, messageCtx.peerId);
+                }
+            }
+        });
     }
 
-    private handleNewChatMember = async (ctx): Promise<void> => {
-        const {
-            new_chat_member: { user },
-        } = ctx.chatMember;
-        const inChat = await this.database.chats.isUserInChat(user.id, ctx.chat.id);
-        if (!inChat) {
-            await this.database.chats.userJoined(user.id, ctx.chat.id);
-        }
-    };
-
-    private handleLeftChatMember = async (ctx): Promise<void> => {
-        const {
-            new_chat_member: { user },
-        } = ctx.chatMember;
-        await this.database.chats.userLeft(user.id, ctx.chat.id);
-    };
-
-    private handleNewChatMembers = async (ctx): Promise<void> => {
-        for (const user of ctx.message.new_chat_members) {
-            const inChat = await this.database.chats.isUserInChat(user.id, ctx.chat.id);
-            if (!inChat) {
-                await this.database.chats.userJoined(user.id, ctx.chat.id);
-            }
-        }
-    };
-
-    private handleCallbackQuery = async (context): Promise<void> => {
-        const ctx = this.buildContext(context);
-        await ctx.ensureUserInfoUpdated();
-        await this.database.statsModel.logMessage(ctx);
-        if (await this.processCommands(ctx)) {
-            await context.answerCallbackQuery();
+    private handleMessageEvent = async (context: MessageEventContext): Promise<void> => {
+        global.logger.info("handleMessageEvent fired", { userId: context.userId, peerId: context.peerId, payload: context.eventPayload });
+        try {
+            const ctx = this.buildContext(context);
+            await ctx.ensureUserInfoUpdated();
+            await this.database.statsModel.logMessage(ctx);
+            await this.processCommands(ctx);
+            await context.answer({ type: "show_snackbar", text: "" });
+        } catch (e) {
+            global.logger.error("handleMessageEvent error:", e);
         }
     };
 
@@ -291,7 +229,20 @@ export class Bot {
         "osu!link": "s link",
     };
 
-    private handleMessage = async (context): Promise<void> => {
+    private commandAliases: Record<string, string> = {
+        start: "osu onboarding",
+        help: "osu help",
+        settings: "osu settings",
+        user: "s u",
+        recent: "s r",
+        top_scores: "s t",
+        chat_leaderboard: "s chat -std",
+        chat_leaderboard_mania: "s chat -mania",
+        chat_leaderboard_taiko: "s chat -taiko",
+        chat_leaderboard_fruits: "s chat -ctb",
+    };
+
+    private handleMessage = async (context: MessageContext): Promise<void> => {
         if (this.shouldSkipMessage(context)) {
             return;
         }
@@ -301,6 +252,7 @@ export class Bot {
 
         if (await ctx.checkFeature("plaintext-overrides")) {
             ctx.applyTextOverrides(this.okiChanAliases);
+            ctx.applyTextOverrides(this.commandAliases);
         }
 
         this.totalMessages++;
@@ -336,8 +288,9 @@ export class Bot {
         await this.processCommands(ctx);
     };
 
-    private shouldSkipMessage(ctx: TgContext): boolean {
-        return ctx.from.is_bot || this.ignored.isIgnored(ctx.from.id);
+    private shouldSkipMessage(ctx: MessageContext): boolean {
+        if (ctx.senderId < 0) return true;
+        return this.ignored.isIgnored(ctx.senderId);
     }
 
     private async processOnboardings(ctx: UnifiedMessageContext): Promise<boolean> {
@@ -400,36 +353,6 @@ export class Bot {
         return false;
     }
 
-    private configureCommandAliases(): void {
-        const aliases: Record<string, string> = {
-            start: "osu onboarding",
-            help: "osu help",
-            settings: "osu settings",
-            user: "s u",
-            recent: "s r",
-            top_scores: "s t",
-            chat_leaderboard: "s chat -std",
-            chat_leaderboard_mania: "s chat -mania",
-            chat_leaderboard_taiko: "s chat -taiko",
-            chat_leaderboard_fruits: "s chat -ctb",
-        };
-
-        Object.entries(aliases).forEach(([command, alias]) => {
-            this.tg.command(command, async (ctx) => {
-                const realCommand = ctx.message.text.split(/\s+/)[0];
-                const realAlias = {};
-                realAlias[realCommand] = alias;
-
-                const unifiedCtx = this.buildContext(ctx as TgContext);
-                await unifiedCtx.ensureUserInfoUpdated();
-                unifiedCtx.applyTextOverrides(realAlias);
-
-                await this.database.statsModel.logMessage(unifiedCtx);
-                await this.processCommands(unifiedCtx);
-            });
-        });
-    }
-
     private initHealthCheck() {
         this.ensureExpressAppCreated();
 
@@ -485,30 +408,39 @@ export class Bot {
         await this.banchoApi.login();
         this.startTime = Date.now();
 
-        this.me = await this.tg.api.getMe();
+        try {
+            const response = (await this.vk.api.groups.getById({
+                group_id: this.config.vk.groupId,
+            })) as unknown as Array<{ id: number; name: string }>;
+            const group = Array.isArray(response) ? response[0] : response;
+            this.me = {
+                id: -(group?.id ?? this.config.vk.groupId) || 0,
+                name: group?.name ?? "osubot",
+            };
+        } catch (e) {
+            global.logger.error("Failed to get group info:", e);
+            this.me = { id: -this.config.vk.groupId, name: "osubot" };
+        }
 
         if (this.useWebhooks) {
             this.ensureExpressAppCreated();
-            this.expressApp.use(webhookCallback(this.tg, "express"));
-
-            const endpoint = process.env.WEBHOOK_ENDPOINT;
-            await this.tg.api.setWebhook(endpoint, {
-                drop_pending_updates: process.env.IGNORE_OLD_UPDATES === "true",
-                allowed_updates: ["chat_member", "callback_query", "message"],
-            });
+            try {
+                await this.vk.updates.startWebhook({
+                    path: process.env.WEBHOOK_ENDPOINT ?? "/",
+                    port: Number(process.env.APP_PORT),
+                });
+            } catch (e) {
+                global.logger.error("Failed to start webhook:", e);
+            }
         } else {
-            await this.tg.api.deleteWebhook({
-                drop_pending_updates: process.env.IGNORE_OLD_UPDATES === "true",
-            });
-
-            this.handle = run(this.tg, {
-                runner: {
-                    fetch: {
-                        allowed_updates: ["chat_member", "callback_query", "message"],
-                    },
-                },
-            });
+            try {
+                await this.vk.updates.startPolling();
+                global.logger.info("Started polling for updates");
+            } catch (e) {
+                global.logger.error("Failed to start polling:", e);
+            }
         }
+
         await this.database.statsModel.logStartup(this.me);
         await this.startStatsLogger();
 
@@ -516,7 +448,7 @@ export class Bot {
         this.initPrometheusMetrics();
         this.listenExpressAppIfNeeded();
 
-        global.logger.info(`Bot started as @${this.me.username} (${this.me.first_name})`);
+        global.logger.info(`Bot started as ${this.me.name} (group ${this.config.vk.groupId})`);
     }
 
     private async logStatsInfo() {
@@ -547,10 +479,10 @@ export class Bot {
     }
 
     public async stop(): Promise<void> {
-        if (this.useWebhooks) {
-            await this.tg.api.deleteWebhook();
-        } else {
-            await this.handle.stop();
+        try {
+            await this.vk.updates.stop();
+        } catch {
+            // ignore
         }
         clearInterval(this.statsInterval);
         global.logger.info("Bot stopped");

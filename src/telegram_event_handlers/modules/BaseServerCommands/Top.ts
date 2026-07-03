@@ -3,7 +3,6 @@ import { IKeyboard } from "../../../Util";
 import Mods from "../../../osu_specific/pp/Mods";
 import { ServerCommand, CommandContext } from "../../ServerCommand";
 import { Mode, APIUser, APIScore } from "../../../Types";
-import { GrammyError } from "grammy";
 import { IBeatmap } from "../../../beatmaps/BeatmapTypes";
 import { ILocalisator } from "../../../ILocalisator";
 
@@ -174,7 +173,7 @@ export default class AbstractTop extends ServerCommand {
             try {
                 await context.edit(data.text, { keyboard, photo: data.photo });
             } catch (e) {
-                if (e instanceof GrammyError && e.message.includes("message is not modified")) {
+                if (e && typeof e === "object" && "message" in e && String((e as Error).message).includes("message is not modified")) {
                     await context.answer(l.tr("no-updates-notification"));
                     return;
                 }

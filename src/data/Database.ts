@@ -1,4 +1,4 @@
-import { Bot as TG } from "grammy";
+import { VK } from "vk-io";
 import { Pool, QueryResult } from "pg";
 import { APIUser, IDatabaseServer, IDatabaseUser, IDatabaseUserStats } from "../Types";
 import UnifiedMessageContext from "../TelegramSupport";
@@ -170,6 +170,7 @@ class DatabaseErrors {
         if (!check) {
             await this.db.run("INSERT INTO errors (code, info, error) VALUES ($1, $2, $3)", [hash, info, errorText]);
         }
+        global.logger.error(`[${hash}] ${info}`, error instanceof Error ? { stack: error.stack, message: error.message } : error);
         return hash;
     }
 
@@ -209,11 +210,11 @@ export default class Database {
     readonly userInfo: UserInfoModel;
 
     private readonly db: Pool;
-    private readonly tg: TG;
+    readonly vk: VK;
     private readonly owner: number;
 
-    constructor(tg: TG, owner: number) {
-        this.tg = tg;
+    constructor(vk: VK, owner: number) {
+        this.vk = vk;
         this.owner = owner;
 
         this.servers = {
@@ -225,7 +226,7 @@ export default class Database {
             scoresaber: new DatabaseServer("scoresaber", this),
         };
 
-        this.covers = new CoversModel(this, this.tg, this.owner);
+        this.covers = new CoversModel(this, this.vk, this.owner);
         this.errors = new DatabaseErrors(this);
         this.chats = new ChatMembersModel(this);
         this.ignore = new DatabaseIgnore(this);

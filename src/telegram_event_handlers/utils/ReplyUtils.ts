@@ -1,7 +1,6 @@
 import { OkiCardsGenerator } from "../../oki-cards/OkiCardsGenerator";
 import UnifiedMessageContext from "../../TelegramSupport";
 import { APIScore, APIUser, PPArgs } from "../../Types";
-import { InputFile } from "grammy";
 import Calculator from "../../osu_specific/pp/bancho";
 import { CoversModel } from "../../data/Models/CoversModel";
 import { IBeatmap } from "../../beatmaps/BeatmapTypes";
@@ -12,7 +11,7 @@ import Util from "../../Util";
 
 export interface ReplyData {
     text: string;
-    photo: string | InputFile;
+    photo: string | Buffer;
 }
 
 export class ReplyUtils {
@@ -39,7 +38,7 @@ export class ReplyUtils {
                 const beatmapUrl = beatmap.url ?? `${serverBase}/b/${beatmap.id}`;
                 return {
                     text: `${l.tr("score-beatmap-link")}: ${beatmapUrl}`,
-                    photo: new InputFile(card),
+                    photo: card,
                 };
             }
 
@@ -67,7 +66,7 @@ export class ReplyUtils {
             if (card) {
                 return {
                     text: `${serverBase}/u/${user.id}`,
-                    photo: new InputFile(card),
+                    photo: card,
                 };
             }
             templateAddition = "\n\n" + l.tr("card-gen-failed");
@@ -96,7 +95,7 @@ export class ReplyUtils {
             if (card) {
                 return {
                     text: "",
-                    photo: new InputFile(card),
+                    photo: card,
                 };
             }
             templateAddition = "\n\n" + l.tr("card-gen-failed");
@@ -127,7 +126,7 @@ export class ReplyUtils {
                 const beatmapUrl = `https://osu.ppy.sh/b/${beatmap.id}`;
                 return {
                     text: beatmapUrl,
-                    photo: new InputFile(photo),
+                    photo: photo,
                 };
             }
 
@@ -158,7 +157,7 @@ export class ReplyUtils {
                 const beatmapUrl = `https://osu.ppy.sh/b/${beatmap.id}`;
                 return {
                     text: beatmapUrl,
-                    photo: new InputFile(photo),
+                    photo: photo,
                 };
             }
 

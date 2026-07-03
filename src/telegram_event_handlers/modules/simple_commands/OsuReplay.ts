@@ -8,7 +8,6 @@ import { IReplayRenderer, RenderSettings } from "../../../osu_specific/replay_re
 import { IssouBestRenderer } from "../../../osu_specific/replay_render/IssouBestRenderer";
 import { OsrReplay } from "../../../osu_specific/OsrReplay";
 import { ExperimentalRenderer } from "../../../osu_specific/replay_render/ExperimentalRenderer";
-import { InputFile } from "grammy";
 
 export class OsuReplay extends Command {
     renderer: IReplayRenderer;
@@ -182,7 +181,7 @@ export class OsuReplay extends Command {
                 }) + "\n\n";
 
             let fullBody = renderAdditional.trim();
-            let cover: string | InputFile;
+            let cover: string | Buffer;
             if (!ctx.messagePayload) {
                 const replyData = await this.module.bot.replyUtils.scoreData(
                     ctx,

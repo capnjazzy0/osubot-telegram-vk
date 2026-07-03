@@ -110,7 +110,7 @@ export class UserInfoModel {
         if (info && info.display_username) {
             return `@${info.display_username}`;
         }
-        return `tg://user?id=${userId}`;
+        return `[id${userId}|user]`;
     }
 }
 

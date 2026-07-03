@@ -1,7 +1,10 @@
 import Database from "../Database";
 import { Command } from "../../telegram_event_handlers/Command";
 import UnifiedMessageContext from "../../TelegramSupport";
-import { UserFromGetMe } from "@grammyjs/types";
+interface VkGroupInfo {
+    id: number;
+    name: string;
+}
 import fs from "fs/promises";
 
 type RenderEvents = "render_start" | "render_success" | "render_failed";
@@ -99,8 +102,8 @@ export class StatisticsModel {
             `INSERT INTO bot_events_commands (user_id, chat_id, module, command, text, is_payload)
              VALUES ($1, $2, $3, $4, $5, $6)`,
             [
-                ctx.senderId,
-                ctx.chatId,
+                Number.isFinite(ctx.senderId) ? ctx.senderId : null,
+                Number.isFinite(ctx.chatId) ? ctx.chatId : null,
                 command.module.name,
                 command.name,
                 ctx.plainPayload ?? ctx.plainText ?? "",
@@ -109,11 +112,11 @@ export class StatisticsModel {
         );
     }
 
-    public async logStartup(me: UserFromGetMe) {
+    public async logStartup(me: { id: number; name: string }) {
         await this.db.run(
             `INSERT INTO bot_events_startup (bot_id, username, first_name, last_name)
              VALUES ($1, $2, $3, $4)`,
-            [me.id ?? null, me.username ?? null, me.first_name ?? null, me.last_name ?? null]
+            [Number.isFinite(me.id) ? me.id : null, "vk", me.name ?? null, null]
         );
     }
 
@@ -128,7 +131,7 @@ export class StatisticsModel {
             await this.db.run(
                 `INSERT INTO bot_events_render (event_type, user_id, chat_id, experimental, mode, error_message)
                  VALUES ($1, $2, $3, $4, $5, $6)`,
-                [type, ctx.senderId, ctx.chatId, isExperimental, mode, message ?? null]
+                [type, Number.isFinite(ctx.senderId) ? ctx.senderId : null, Number.isFinite(ctx.chatId) ? ctx.chatId : null, isExperimental, mode, message ?? null]
             );
         } catch (error) {
             global.logger.error("Raw event logging error:", error);
@@ -140,7 +143,7 @@ export class StatisticsModel {
             await this.db.run(
                 `INSERT INTO bot_events (event_type, user_id, chat_id)
                  VALUES ($1, $2, $3)`,
-                [type, userId, chatId]
+                [type, Number.isFinite(userId) ? userId : null, Number.isFinite(chatId) ? chatId : null]
             );
         } catch (error) {
             global.logger.error("Raw event logging error:", error);

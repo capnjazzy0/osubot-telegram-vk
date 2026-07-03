@@ -1,0 +1,364 @@
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+osubot_bot  | [37m2026-07-03 15:36:00.877[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:00.906[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:00.944[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | node:internal/process/promises:394
+osubot_bot  |     triggerUncaughtException(err, true /* fromPromise */);
+osubot_bot  |     ^
+osubot_bot  | 
+osubot_bot  | Error: connect ECONNREFUSED 172.18.0.2:5432
+osubot_bot  |     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1706:16) {
+osubot_bot  |   errno: -111,
+osubot_bot  |   code: 'ECONNREFUSED',
+osubot_bot  |   syscall: 'connect',
+osubot_bot  |   address: '172.18.0.2',
+osubot_bot  |   port: 5432
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+osubot_bot  | [37m2026-07-03 15:36:01.881[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:01.909[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:01.938[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | node:internal/process/promises:394
+osubot_bot  |     triggerUncaughtException(err, true /* fromPromise */);
+osubot_bot  |     ^
+osubot_bot  | 
+osubot_bot  | Error: connect ECONNREFUSED 172.18.0.2:5432
+osubot_bot  |     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1706:16) {
+osubot_bot  |   errno: -111,
+osubot_bot  |   code: 'ECONNREFUSED',
+osubot_bot  |   syscall: 'connect',
+osubot_bot  |   address: '172.18.0.2',
+osubot_bot  |   port: 5432
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+osubot_bot  | [37m2026-07-03 15:36:02.896[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:02.922[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:02.960[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | node:internal/process/promises:394
+osubot_bot  |     triggerUncaughtException(err, true /* fromPromise */);
+osubot_bot  |     ^
+osubot_bot  | 
+osubot_bot  | Error: connect ECONNREFUSED 172.18.0.2:5432
+osubot_bot  |     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1706:16) {
+osubot_bot  |   errno: -111,
+osubot_bot  |   code: 'ECONNREFUSED',
+osubot_bot  |   syscall: 'connect',
+osubot_bot  |   address: '172.18.0.2',
+osubot_bot  |   port: 5432
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+osubot_bot  | [37m2026-07-03 15:36:04.140[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:04.154[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:04.190[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | node:internal/process/promises:394
+osubot_bot  |     triggerUncaughtException(err, true /* fromPromise */);
+osubot_bot  |     ^
+osubot_bot  | 
+osubot_bot  | Error: connect ECONNREFUSED 172.18.0.2:5432
+osubot_bot  |     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1706:16) {
+osubot_bot  |   errno: -111,
+osubot_bot  |   code: 'ECONNREFUSED',
+osubot_bot  |   syscall: 'connect',
+osubot_bot  |   address: '172.18.0.2',
+osubot_bot  |   port: 5432
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: 📡 version env with Radar: https://dotenvx.com/radar
+osubot_bot  | [37m2026-07-03 15:36:05.763[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:05.777[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:05.811[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | node:internal/process/promises:394
+osubot_bot  |     triggerUncaughtException(err, true /* fromPromise */);
+osubot_bot  |     ^
+osubot_bot  | 
+osubot_bot  | Error: connect ECONNREFUSED 172.18.0.2:5432
+osubot_bot  |     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1706:16) {
+osubot_bot  |   errno: -111,
+osubot_bot  |   code: 'ECONNREFUSED',
+osubot_bot  |   syscall: 'connect',
+osubot_bot  |   address: '172.18.0.2',
+osubot_bot  |   port: 5432
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+osubot_bot  | [37m2026-07-03 15:36:08.163[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:08.178[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:08.215[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | node:internal/process/promises:394
+osubot_bot  |     triggerUncaughtException(err, true /* fromPromise */);
+osubot_bot  |     ^
+osubot_bot  | 
+osubot_bot  | Error: connect ECONNREFUSED 172.18.0.2:5432
+osubot_bot  |     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1706:16) {
+osubot_bot  |   errno: -111,
+osubot_bot  |   code: 'ECONNREFUSED',
+osubot_bot  |   syscall: 'connect',
+osubot_bot  |   address: '172.18.0.2',
+osubot_bot  |   port: 5432
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+osubot_bot  | [37m2026-07-03 15:36:12.241[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:12.271[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:12.305[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | node:internal/process/promises:394
+osubot_bot  |     triggerUncaughtException(err, true /* fromPromise */);
+osubot_bot  |     ^
+osubot_bot  | 
+osubot_bot  | Error: connect ECONNREFUSED 172.18.0.2:5432
+osubot_bot  |     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1706:16) {
+osubot_bot  |   errno: -111,
+osubot_bot  |   code: 'ECONNREFUSED',
+osubot_bot  |   syscall: 'connect',
+osubot_bot  |   address: '172.18.0.2',
+osubot_bot  |   port: 5432
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: 📡 auto-backup env with Radar: https://dotenvx.com/radar
+osubot_bot  | [37m2026-07-03 15:36:19.457[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:19.476[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:19.504[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | [37m2026-07-03 15:36:19.667[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:518[39m[0m[0m[1m[37m[39m[22m[0m[0m	Applying migrations
+osubot_bot  | [37m2026-07-03 15:36:19.673[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #1: Create tables
+osubot_bot  | [37m2026-07-03 15:36:19.734[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.740[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #2: Create ignore list table
+osubot_bot  | [37m2026-07-03 15:36:19.745[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.747[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #3: Remove all cached covers (migrate from raw to cover@2x)
+osubot_bot  | [37m2026-07-03 15:36:19.752[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.754[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #4: Create osu! beatmap metadata cache table
+osubot_bot  | [37m2026-07-03 15:36:19.766[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.768[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #5: Create settings table
+osubot_bot  | [37m2026-07-03 15:36:19.781[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.783[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #6: Add ordr_strain_graph to settings
+osubot_bot  | [37m2026-07-03 15:36:19.786[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.788[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #7: Change ordr_skin type to TEXT
+osubot_bot  | [37m2026-07-03 15:36:19.827[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.830[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #8: Add ability to set custom o!rdr skin
+osubot_bot  | [37m2026-07-03 15:36:19.832[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.835[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #9: Create chat_settings table
+osubot_bot  | [37m2026-07-03 15:36:19.842[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.845[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #10: Remove Qualified maps from cache
+osubot_bot  | [37m2026-07-03 15:36:19.853[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.854[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #11: Add notifications_enabled to settings
+osubot_bot  | [37m2026-07-03 15:36:19.859[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.862[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #12: Add experimental_renderer to settings
+osubot_bot  | [37m2026-07-03 15:36:19.865[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.867[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #13: Add language_override to settings
+osubot_bot  | [37m2026-07-03 15:36:19.877[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.880[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #14: Add render volume settings
+osubot_bot  | [37m2026-07-03 15:36:19.888[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.891[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #15: Add content output type settings
+osubot_bot  | [37m2026-07-03 15:36:19.896[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.899[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #16: Add feature control
+osubot_bot  | [37m2026-07-03 15:36:19.919[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.922[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #17: Add feature 'plaintext-overrides'
+osubot_bot  | [37m2026-07-03 15:36:19.925[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.927[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #18: Add cover url to beatmap cache
+osubot_bot  | [37m2026-07-03 15:36:19.934[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.937[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #19: Add author_id to beatmap cache
+osubot_bot  | [37m2026-07-03 15:36:19.941[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.944[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #20: Force enable oki-cards for all
+osubot_bot  | [37m2026-07-03 15:36:19.944[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.947[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #21: Create 'statistics' table
+osubot_bot  | [37m2026-07-03 15:36:19.992[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:19.994[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #22: Optimize stats events
+osubot_bot  | [37m2026-07-03 15:36:20.104[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:20.106[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #23: add 'admin-all-features' feature
+osubot_bot  | [37m2026-07-03 15:36:20.109[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:20.110[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #24: add 'force-onboarding' feature
+osubot_bot  | [37m2026-07-03 15:36:20.121[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:20.123[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #25: Enable compression for statistics hypertables
+osubot_bot  | [37m2026-07-03 15:36:20.124[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:453[39m[0m[0m[1m[37m[39m[22m[0m[0m	Enabling timescaledb.compress for bot_events
+osubot_bot  | [37m2026-07-03 15:36:20.132[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:463[39m[0m[0m[1m[37m[39m[22m[0m[0m	Adding compression policy for bot_events
+osubot_bot  | [37m2026-07-03 15:36:20.136[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:453[39m[0m[0m[1m[37m[39m[22m[0m[0m	Enabling timescaledb.compress for bot_events_metrics
+osubot_bot  | [37m2026-07-03 15:36:20.141[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:463[39m[0m[0m[1m[37m[39m[22m[0m[0m	Adding compression policy for bot_events_metrics
+osubot_bot  | [37m2026-07-03 15:36:20.143[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:453[39m[0m[0m[1m[37m[39m[22m[0m[0m	Enabling timescaledb.compress for bot_events_render
+osubot_bot  | [37m2026-07-03 15:36:20.147[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:463[39m[0m[0m[1m[37m[39m[22m[0m[0m	Adding compression policy for bot_events_render
+osubot_bot  | [37m2026-07-03 15:36:20.150[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:453[39m[0m[0m[1m[37m[39m[22m[0m[0m	Enabling timescaledb.compress for bot_events_commands
+osubot_bot  | [37m2026-07-03 15:36:20.155[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:463[39m[0m[0m[1m[37m[39m[22m[0m[0m	Adding compression policy for bot_events_commands
+osubot_bot  | [37m2026-07-03 15:36:20.157[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:453[39m[0m[0m[1m[37m[39m[22m[0m[0m	Enabling timescaledb.compress for bot_events_startup
+osubot_bot  | [37m2026-07-03 15:36:20.162[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:463[39m[0m[0m[1m[37m[39m[22m[0m[0m	Adding compression policy for bot_events_startup
+osubot_bot  | [37m2026-07-03 15:36:20.164[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:20.166[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #26: Set daily chunk interval for high-volume statistics tables
+osubot_bot  | [37m2026-07-03 15:36:20.166[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:475[39m[0m[0m[1m[37m[39m[22m[0m[0m	Seting daily chunk interval for bot_events
+osubot_bot  | [37m2026-07-03 15:36:20.168[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:475[39m[0m[0m[1m[37m[39m[22m[0m[0m	Seting daily chunk interval for bot_events_commands
+osubot_bot  | [37m2026-07-03 15:36:20.171[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:475[39m[0m[0m[1m[37m[39m[22m[0m[0m	Seting daily chunk interval for bot_events_render
+osubot_bot  | [37m2026-07-03 15:36:20.173[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:20.175[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #27: Create user_info table for telegram usernames cache
+osubot_bot  | [37m2026-07-03 15:36:20.189[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:20.192[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #28: Add display_username to user_info and convert username to lowercase
+osubot_bot  | [37m2026-07-03 15:36:20.197[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:20.199[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:528[39m[0m[0m[1m[37m[39m[22m[0m[0m	Processing migration #29: Add enable_find to settings
+osubot_bot  | [37m2026-07-03 15:36:20.202[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:537[39m[0m[0m[1m[37m[39m[22m[0m[0m	Success
+osubot_bot  | [37m2026-07-03 15:36:20.204[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:237[39m[0m[0m[1m[37m[39m[22m[0m[0m	Database initialized successfully
+osubot_bot  | [37m2026-07-03 15:36:21.155[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:402[39m[0m[0m[1m[37m[39m[22m[0m[0m	Started polling for updates
+osubot_bot  | /usr/osubot/node_modules/pg-protocol/dist/parser.js:285
+osubot_bot  |         const message = name === 'notice' ? new messages_1.NoticeMessage(length, messageValue) : new messages_1.DatabaseError(messageValue, length, name);
+osubot_bot  |                                                                                                  ^
+osubot_bot  | 
+osubot_bot  | error: invalid input syntax for type bigint: "NaN"
+osubot_bot  |     at Parser.parseErrorMessage (/usr/osubot/node_modules/pg-protocol/dist/parser.js:285:98)
+osubot_bot  |     at Parser.handlePacket (/usr/osubot/node_modules/pg-protocol/dist/parser.js:122:29)
+osubot_bot  |     at Parser.parse (/usr/osubot/node_modules/pg-protocol/dist/parser.js:35:38)
+osubot_bot  |     at Socket.<anonymous> (/usr/osubot/node_modules/pg-protocol/dist/index.js:11:42)
+osubot_bot  |     at Socket.emit (node:events:509:28)
+osubot_bot  |     at addChunk (node:internal/streams/readable:563:12)
+osubot_bot  |     at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)
+osubot_bot  |     at Readable.push (node:internal/streams/readable:394:5)
+osubot_bot  |     at TCP.onStreamRead (node:internal/stream_base_commons:189:23) {
+osubot_bot  |   length: 145,
+osubot_bot  |   severity: 'ERROR',
+osubot_bot  |   code: '22P02',
+osubot_bot  |   detail: undefined,
+osubot_bot  |   hint: undefined,
+osubot_bot  |   position: undefined,
+osubot_bot  |   internalPosition: undefined,
+osubot_bot  |   internalQuery: undefined,
+osubot_bot  |   where: "unnamed portal parameter $1 = '...'",
+osubot_bot  |   schema: undefined,
+osubot_bot  |   table: undefined,
+osubot_bot  |   column: undefined,
+osubot_bot  |   dataType: undefined,
+osubot_bot  |   constraint: undefined,
+osubot_bot  |   file: 'numutils.c',
+osubot_bot  |   line: '878',
+osubot_bot  |   routine: 'pg_strtoint64_safe'
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: 📡 version env with Radar: https://dotenvx.com/radar
+osubot_bot  | [37m2026-07-03 15:36:34.874[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:36:34.902[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:36:34.934[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | [37m2026-07-03 15:36:35.038[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:518[39m[0m[0m[1m[37m[39m[22m[0m[0m	Applying migrations
+osubot_bot  | [37m2026-07-03 15:36:35.045[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:237[39m[0m[0m[1m[37m[39m[22m[0m[0m	Database initialized successfully
+osubot_bot  | [37m2026-07-03 15:36:35.927[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:402[39m[0m[0m[1m[37m[39m[22m[0m[0m	Started polling for updates
+osubot_bot  | /usr/osubot/node_modules/pg-protocol/dist/parser.js:285
+osubot_bot  |         const message = name === 'notice' ? new messages_1.NoticeMessage(length, messageValue) : new messages_1.DatabaseError(messageValue, length, name);
+osubot_bot  |                                                                                                  ^
+osubot_bot  | 
+osubot_bot  | error: invalid input syntax for type bigint: "NaN"
+osubot_bot  |     at Parser.parseErrorMessage (/usr/osubot/node_modules/pg-protocol/dist/parser.js:285:98)
+osubot_bot  |     at Parser.handlePacket (/usr/osubot/node_modules/pg-protocol/dist/parser.js:122:29)
+osubot_bot  |     at Parser.parse (/usr/osubot/node_modules/pg-protocol/dist/parser.js:35:38)
+osubot_bot  |     at Socket.<anonymous> (/usr/osubot/node_modules/pg-protocol/dist/index.js:11:42)
+osubot_bot  |     at Socket.emit (node:events:509:28)
+osubot_bot  |     at addChunk (node:internal/streams/readable:563:12)
+osubot_bot  |     at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)
+osubot_bot  |     at Readable.push (node:internal/streams/readable:394:5)
+osubot_bot  |     at TCP.onStreamRead (node:internal/stream_base_commons:189:23) {
+osubot_bot  |   length: 145,
+osubot_bot  |   severity: 'ERROR',
+osubot_bot  |   code: '22P02',
+osubot_bot  |   detail: undefined,
+osubot_bot  |   hint: undefined,
+osubot_bot  |   position: undefined,
+osubot_bot  |   internalPosition: undefined,
+osubot_bot  |   internalQuery: undefined,
+osubot_bot  |   where: "unnamed portal parameter $1 = '...'",
+osubot_bot  |   schema: undefined,
+osubot_bot  |   table: undefined,
+osubot_bot  |   column: undefined,
+osubot_bot  |   dataType: undefined,
+osubot_bot  |   constraint: undefined,
+osubot_bot  |   file: 'numutils.c',
+osubot_bot  |   line: '878',
+osubot_bot  |   routine: 'pg_strtoint64_safe'
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 
+osubot_bot  | [dotenv@17.2.1] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+osubot_bot  | [37m2026-07-03 15:37:02.435[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/index.js:22[39m[0m[0m[1m[37m[39m[22m[0m[0m	Starting...
+osubot_bot  | [37m2026-07-03 15:37:02.478[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:96[39m[0m[0m[1m[37m[39m[22m[0m[0m	Set owner id:  [33m91150089[39m
+osubot_bot  | [37m2026-07-03 15:37:02.519[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:234[39m[0m[0m[1m[37m[39m[22m[0m[0m	Initializing database
+osubot_bot  | [37m2026-07-03 15:37:02.585[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Migrations.js:518[39m[0m[0m[1m[37m[39m[22m[0m[0m	Applying migrations
+osubot_bot  | [37m2026-07-03 15:37:02.593[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/data/Database.js:237[39m[0m[0m[1m[37m[39m[22m[0m[0m	Database initialized successfully
+osubot_bot  | [37m2026-07-03 15:37:03.542[39m[0m[0m	[34m[1mINFO[22m[39m[0m[0m	[37m/build/src/Bot.js:402[39m[0m[0m[1m[37m[39m[22m[0m[0m	Started polling for updates
+osubot_bot  | /usr/osubot/node_modules/pg-protocol/dist/parser.js:285
+osubot_bot  |         const message = name === 'notice' ? new messages_1.NoticeMessage(length, messageValue) : new messages_1.DatabaseError(messageValue, length, name);
+osubot_bot  |                                                                                                  ^
+osubot_bot  | 
+osubot_bot  | error: invalid input syntax for type bigint: "NaN"
+osubot_bot  |     at Parser.parseErrorMessage (/usr/osubot/node_modules/pg-protocol/dist/parser.js:285:98)
+osubot_bot  |     at Parser.handlePacket (/usr/osubot/node_modules/pg-protocol/dist/parser.js:122:29)
+osubot_bot  |     at Parser.parse (/usr/osubot/node_modules/pg-protocol/dist/parser.js:35:38)
+osubot_bot  |     at Socket.<anonymous> (/usr/osubot/node_modules/pg-protocol/dist/index.js:11:42)
+osubot_bot  |     at Socket.emit (node:events:509:28)
+osubot_bot  |     at addChunk (node:internal/streams/readable:563:12)
+osubot_bot  |     at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)
+osubot_bot  |     at Readable.push (node:internal/streams/readable:394:5)
+osubot_bot  |     at TCP.onStreamRead (node:internal/stream_base_commons:189:23) {
+osubot_bot  |   length: 145,
+osubot_bot  |   severity: 'ERROR',
+osubot_bot  |   code: '22P02',
+osubot_bot  |   detail: undefined,
+osubot_bot  |   hint: undefined,
+osubot_bot  |   position: undefined,
+osubot_bot  |   internalPosition: undefined,
+osubot_bot  |   internalQuery: undefined,
+osubot_bot  |   where: "unnamed portal parameter $1 = '...'",
+osubot_bot  |   schema: undefined,
+osubot_bot  |   table: undefined,
+osubot_bot  |   column: undefined,
+osubot_bot  |   dataType: undefined,
+osubot_bot  |   constraint: undefined,
+osubot_bot  |   file: 'numutils.c',
+osubot_bot  |   line: '878',
+osubot_bot  |   routine: 'pg_strtoint64_safe'
+osubot_bot  | }
+osubot_bot  | 
+osubot_bot  | Node.js v24.18.0
+osubot_bot  | 
+osubot_bot  | > osubot-vk@3.0.0 start
+osubot_bot  | > node ./build
+osubot_bot  | 

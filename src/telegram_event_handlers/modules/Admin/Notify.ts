@@ -47,12 +47,17 @@ export default class NotifyCommand extends Command {
                 for (const chatId of target) {
                     try {
                         global.logger.info(`Sending message to '${chatId}'`);
-                        await this.module.bot.tg.api.sendMessage(chatId, text);
+                        await this.module.bot.vk.api.messages.send({
+                            peer_id: chatId,
+                            message: text,
+                            random_id: Date.now(),
+                        });
                         sent++;
                     } catch (e) {
                         if (
-                            e.message.includes("bot was kicked from the") ||
-                            e.message.includes("the group chat was deleted")
+                            (e.message && e.message.includes("bot was kicked from the")) ||
+                            (e.message && e.message.includes("the group chat was deleted")) ||
+                            (e.message && e.message.includes("Permission denied"))
                         ) {
                             await this.module.bot.database.chats.removeChat(chatId);
                             dirtyChats++;

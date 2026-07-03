@@ -1,32 +1,18 @@
-import { Api, Context, InlineKeyboard, InputFile, InputMediaBuilder } from "grammy";
-import { MessageEntity, UserFromGetMe } from "@grammyjs/types";
-import { FileApiFlavor, FileFlavor } from "@grammyjs/files";
-import { I18nFlavor } from "@grammyjs/i18n";
+import { MessageContext, MessageEventContext, Keyboard as VKKeyboard, VK } from "vk-io";
+import { FluentBundle, FluentResource } from "@fluent/bundle";
 import fs from "fs/promises";
+import path from "path";
 import { ILocalisator, TranslateFunction, TranslationVariables } from "./ILocalisator";
 import { UserSettings } from "./data/Models/Settings/UserSettingsModel";
 import { ChatSettings } from "./data/Models/Settings/ChatSettingsModel";
 import { Language } from "./data/Models/Settings/SettingsTypes";
 import Database from "./data/Database";
 import { ControllableFeature } from "./data/Models/FeatureControlModel";
-import TextLinkMessageEntity = MessageEntity.TextLinkMessageEntity;
 import { IKeyboard } from "./Util";
 import Util from "./Util";
+import axios from "axios";
 
-export type TgContext = FileFlavor<Context & I18nFlavor>;
-export type TgApi = FileApiFlavor<Api>;
-
-class ReplyToMessage {
-    readonly text: string;
-    readonly senderId: number;
-    readonly chatId: number;
-
-    constructor(ctx: TgContext) {
-        this.text = ctx.message.reply_to_message.text;
-        this.senderId = ctx.message.reply_to_message.from.id;
-        this.chatId = ctx.message.reply_to_message.chat.id;
-    }
-}
+type VkContext = MessageContext | MessageEventContext;
 
 interface IVideoMeta {
     url: string;
@@ -37,22 +23,87 @@ interface IVideoMeta {
 
 export interface SendOptions {
     keyboard?: IKeyboard;
-    photo?: string | InputFile;
+    photo?: string | Buffer;
     video?: IVideoMeta;
     dont_parse_links?: boolean;
 }
 
-const registry = new FinalizationRegistry(async (path: string) => {
-    if (!(await Util.fileExists(path))) {
+class ReplyToMessage {
+    readonly text: string;
+    readonly senderId: number;
+    readonly chatId: number;
+
+    constructor(ctx: MessageContext) {
+        const reply = ctx.replyMessage;
+        this.text = reply?.text ?? "";
+        this.senderId = reply?.senderId;
+        this.chatId = reply?.peerId;
+    }
+}
+
+const registry = new FinalizationRegistry(async (p: string) => {
+    if (!(await Util.fileExists(p))) {
         return;
     }
-    global.logger.warn(`Removing file ${path} after destructing object`);
+    global.logger.warn(`Removing file ${p} after destructing object`);
     try {
-        await fs.rm(path);
+        await fs.rm(p);
     } catch {
-        global.logger.fatal(`Failed to remove file: ${path}`);
+        global.logger.fatal(`Failed to remove file: ${p}`);
     }
 });
+
+class I18nProvider {
+    private readonly bundles: Map<string, FluentBundle> = new Map();
+    private readonly defaultLocale: string;
+    private loaded: boolean = false;
+
+    constructor(defaultLocale: string) {
+        this.defaultLocale = defaultLocale;
+    }
+
+    async load(directory: string) {
+        const entries = await fs.readdir(directory, { withFileTypes: true });
+        for (const entry of entries) {
+            if (!entry.isDirectory()) continue;
+            const localeDir = path.join(directory, entry.name);
+            const files = await fs.readdir(localeDir);
+            const bundle = new FluentBundle(entry.name, { useIsolating: false });
+            for (const file of files) {
+                if (!file.endsWith(".ftl")) continue;
+                const content = await fs.readFile(path.join(localeDir, file), "utf-8");
+                const resource = new FluentResource(content);
+                bundle.addResource(resource);
+            }
+            this.bundles.set(entry.name, bundle);
+        }
+        this.loaded = true;
+    }
+
+    translate(key: string, vars?: Record<string, unknown>, locale?: string): string {
+        const l = locale ?? this.defaultLocale;
+        const bundle = this.bundles.get(l);
+        if (!bundle) return key;
+        const msg = bundle.getMessage(key);
+        if (!msg) return key;
+        const errors: Error[] = [];
+        const result = bundle.formatPattern(msg.value, vars, errors);
+        if (errors.length > 0) {
+            global.logger.warn(`Translation error for '${key}': ${errors.map((e) => e.message).join(", ")}`);
+        }
+        return result;
+    }
+}
+
+const i18nProvider = new I18nProvider("en");
+
+export async function initI18n(directory: string) {
+    await i18nProvider.load(directory);
+}
+
+function isMessageEventContext(ctx: VkContext): ctx is MessageEventContext {
+    return "eventPayload" in (ctx as Record<string, unknown>);
+}
 
 export default class UnifiedMessageContext implements ILocalisator {
     readonly chatId: number;
@@ -65,9 +116,10 @@ export default class UnifiedMessageContext implements ILocalisator {
 
     readonly isInGroupChat: boolean;
 
-    private readonly tgCtx: TgContext;
-    private readonly me: UserFromGetMe;
-    private readonly localServer: boolean;
+    private readonly vk: VK;
+    private readonly message: MessageContext | undefined;
+    private readonly messageEvent: MessageEventContext | undefined;
+    private readonly me: { id: number };
     private readonly database: Database;
 
     private tmpFile?: string;
@@ -95,38 +147,48 @@ export default class UnifiedMessageContext implements ILocalisator {
 
     private graphicalModeOverride: "no" | "cards" | "plain" = "no";
 
-    private convertReplyMessage(ctx: TgContext): ReplyToMessage {
-        if (!ctx.message?.reply_to_message) {
-            return undefined;
-        }
-
-        const reply = ctx.message.reply_to_message;
-        if (reply.forum_topic_created || reply.forum_topic_closed || reply.forum_topic_reopened) {
-            return undefined;
-        }
-
-        // Ignore replies to channel messages (e.g., in comment threads)
-        // Channel messages have sender_chat instead of from
-        if (reply.sender_chat || !reply.from) {
+    private convertReplyMessage(ctx: MessageContext): ReplyToMessage {
+        if (!ctx.replyMessage) {
             return undefined;
         }
 
         return new ReplyToMessage(ctx);
     }
 
-    constructor(ctx: TgContext, ownerId: number, me: UserFromGetMe, isLocal: boolean, database: Database) {
-        this.tgCtx = ctx;
+    constructor(ctx: VkContext, ownerId: number, me: { id: number }, vk: VK, database: Database) {
+        this.vk = vk;
         this.me = me;
-        this.localServer = isLocal;
         this.database = database;
-
-        this.plainText = ctx.message?.text ?? ctx.message?.caption;
-        this.plainPayload = ctx.callbackQuery?.data;
-        this.replyMessage = this.convertReplyMessage(ctx);
-        this.isInGroupChat = ctx.chat.type == "supergroup" || ctx.chat.type == "group";
-        this.senderId = ctx.from.id;
-        this.chatId = ctx.chatId;
         this.ownerId = ownerId;
+
+        if (isMessageEventContext(ctx)) {
+            const evt = ctx as MessageEventContext;
+            this.messageEvent = evt;
+            this.message = undefined;
+            const rawPayload = evt.eventPayload;
+            let parsedPayload: { d?: string } | undefined;
+            if (typeof rawPayload === "string") {
+                try { parsedPayload = JSON.parse(rawPayload); } catch { parsedPayload = undefined; }
+            } else {
+                parsedPayload = rawPayload as { d?: string } | undefined;
+            }
+            this.plainPayload = parsedPayload?.d ?? undefined;
+            this.plainText = undefined;
+            this.senderId = evt.userId;
+            this.chatId = evt.peerId;
+            this.replyMessage = undefined;
+        } else {
+            const msg = ctx as MessageContext;
+            this.message = msg;
+            this.messageEvent = undefined;
+            this.plainText = msg.text ?? undefined;
+            this.plainPayload = msg.messagePayload ? String(msg.messagePayload) : undefined;
+            this.replyMessage = this.convertReplyMessage(msg);
+            this.senderId = msg.senderId;
+            this.chatId = msg.peerId;
+        }
+
+        this.isInGroupChat = ctx.peerId > 2000000000;
 
         this.parsePayload();
     }
@@ -170,7 +232,6 @@ export default class UnifiedMessageContext implements ILocalisator {
             return;
         }
 
-        //g1^payload payload payload (this payload too!! ->> ^ <<- payload!!!)
         const payload = [];
         let argsEnded = false;
         for (const string of payloadSplit) {
@@ -206,16 +267,22 @@ export default class UnifiedMessageContext implements ILocalisator {
         return "^" + ctxData.join("^") + "^";
     }
 
-    private async createKeyboard(rows: IKeyboard): Promise<InlineKeyboard> {
+    private async createKeyboard(rows: IKeyboard): Promise<ReturnType<typeof VKKeyboard.keyboard> | undefined> {
         if (!rows || rows.length == 0) {
             return undefined;
         }
 
         const payloadPrefix = await this.prepareButtonPayloadPrefix();
+
         const buttonRows = rows.map((row) =>
-            row.map((button) => InlineKeyboard.text(button.text, payloadPrefix + button.command))
+            row.map((button) =>
+                VKKeyboard.callbackButton({
+                    label: button.text,
+                    payload: JSON.stringify({ d: payloadPrefix + button.command }),
+                })
+            )
         );
-        return InlineKeyboard.from(buttonRows);
+        return VKKeyboard.keyboard(buttonRows).inline();
     }
 
     private userInfoUpdated: boolean = false;
@@ -224,13 +291,22 @@ export default class UnifiedMessageContext implements ILocalisator {
             return;
         }
 
-        if (this.tgCtx.from && !this.tgCtx.from.is_bot) {
-            await this.database.userInfo.set({
-                user_id: this.tgCtx.from.id,
-                display_username: this.tgCtx.from.username ?? null,
-                first_name: this.tgCtx.from.first_name ?? null,
-                last_name: this.tgCtx.from.last_name ?? null,
-            });
+        if (this.senderId > 0) {
+            try {
+                const [user] = (await this.vk.api.users.get({
+                    user_ids: [this.senderId],
+                })) as Array<{ id: number; screen_name?: string; first_name: string; last_name: string }>;
+                if (user) {
+                    await this.database.userInfo.set({
+                        user_id: this.senderId,
+                        display_username: user.screen_name ?? null,
+                        first_name: user.first_name ?? null,
+                        last_name: user.last_name ?? null,
+                    });
+                }
+            } catch {
+                // ignore
+            }
         }
 
         this.userInfoUpdated = true;
@@ -255,11 +331,9 @@ export default class UnifiedMessageContext implements ILocalisator {
             }
         }
 
-        if (this.language) {
-            this.tgCtx.i18n.useLocale(this.language);
-        }
-
-        this.internalTranslate = this.tgCtx.translate;
+        this.internalTranslate = (key: string, vars?: TranslationVariables) => {
+            return i18nProvider.translate(key, vars as Record<string, unknown>, this.language ?? undefined);
+        };
         this.isLocalisatorActivated = true;
     }
 
@@ -331,56 +405,51 @@ export default class UnifiedMessageContext implements ILocalisator {
     }
 
     async reply(text: string, options?: SendOptions) {
-        const callbackReplyTo = this.tgCtx.callbackQuery?.from.username
-            ? `@${this.tgCtx.callbackQuery.from.username}`
-            : this.tgCtx.callbackQuery?.from.first_name;
-
-        const isMessage = this.tgCtx.message !== undefined;
-        return await this.send(
-            isMessage ? text : `${callbackReplyTo},\n${text}`,
-            options,
-            isMessage ? this.tgCtx.message.message_id : undefined
-        );
+        return await this.send(text, options);
     }
 
     async send(text: string, options?: SendOptions, replyTo?: number) {
         try {
             const keyboard = await this.createKeyboard(options?.keyboard);
+            let attachment: string | undefined;
+
             if (options?.photo) {
-                return await this.tgCtx.replyWithPhoto(options.photo, {
-                    caption: text,
-                    reply_parameters: {
-                        message_id: replyTo,
-                    },
-                    reply_markup: keyboard,
-                });
+                try {
+                    const source = typeof options.photo === "string"
+                        ? { value: options.photo }
+                        : { value: options.photo };
+                    const uploaded = await this.vk.upload.messagePhoto({
+                        source,
+                        peer_id: this.chatId,
+                    });
+                    attachment = uploaded.toString();
+                } catch (e) {
+                    global.logger.error("Failed to upload photo:", e);
+                }
             }
 
-            if (options?.video) {
-                const video = InputMediaBuilder.video(new InputFile(new URL(options.video.url)), {
-                    width: options.video.width,
-                    height: options.video.height,
-                    duration: options.video.duration,
-                    supports_streaming: true,
-                    caption: text,
-                });
-                const sent = await this.tgCtx.replyWithMediaGroup([video], {
-                    reply_parameters: {
-                        message_id: replyTo,
-                    },
-                });
-                return sent[0];
+            if (options?.video && !attachment) {
+                text = `${text}\n${options.video.url}`;
             }
 
-            return await this.tgCtx.reply(text, {
-                link_preview_options: {
-                    is_disabled: options?.dont_parse_links !== false,
-                },
-                reply_parameters: {
-                    message_id: replyTo,
-                },
-                reply_markup: keyboard,
-            });
+            const params: Record<string, unknown> = {
+                peer_id: this.chatId,
+                message: text,
+                random_id: Date.now(),
+                dont_parse_links: options?.dont_parse_links ? 1 : 0,
+            };
+
+            if (keyboard) {
+                params.keyboard = keyboard;
+            }
+            if (attachment) {
+                params.attachment = attachment;
+            }
+            if (replyTo) {
+                params.reply_to = replyTo;
+            }
+
+            return await this.vk.api.messages.send(params);
         } catch (e) {
             global.logger.error(e);
             return undefined;
@@ -388,11 +457,17 @@ export default class UnifiedMessageContext implements ILocalisator {
     }
 
     async remove() {
-        if (!this.messagePayload) {
+        if (!this.messagePayload && !this.message) {
             return undefined;
         }
         try {
-            await this.tgCtx.deleteMessage();
+            const messageId = this.message?.id ?? this.messageEvent?.conversationMessageId;
+            if (messageId) {
+                await this.vk.api.messages.delete({
+                    message_ids: [messageId],
+                    delete_for_all: 1,
+                });
+            }
         } catch (e) {
             global.logger.error(e);
             return undefined;
@@ -405,44 +480,37 @@ export default class UnifiedMessageContext implements ILocalisator {
         }
 
         const keyboard = await this.createKeyboard(options?.keyboard);
-        const hasMedia = options?.photo || options?.video || this.tgCtx.message?.photo || this.tgCtx.message?.video;
-        if (hasMedia) {
-            if (options?.photo) {
-                await this.tgCtx.editMessageMedia(InputMediaBuilder.photo(options.photo), {
-                    reply_markup: keyboard,
+        let attachment: string | undefined;
+
+        if (options?.photo) {
+            try {
+                const source = typeof options.photo === "string"
+                    ? { value: options.photo }
+                    : { value: options.photo };
+                const uploaded = await this.vk.upload.messagePhoto({
+                    source,
+                    peer_id: this.chatId,
                 });
-            } else if (options?.video) {
-                // TODO: support both
-                const video = InputMediaBuilder.video(new InputFile(new URL(options.video.url)), {
-                    width: options.video.width,
-                    height: options.video.height,
-                    duration: options.video.duration,
-                    supports_streaming: true,
-                    caption: text,
-                });
-                await this.tgCtx.editMessageMedia(video, {
-                    reply_markup: keyboard,
-                });
+                attachment = uploaded.toString();
+            } catch (e) {
+                global.logger.error("Failed to upload photo:", e);
             }
-            await this.tgCtx.editMessageCaption({
-                reply_markup: keyboard,
-                caption: text,
+        }
+
+        try {
+            await this.vk.api.messages.edit({
+                peer_id: this.chatId,
+                message: text,
+                conversation_message_id: this.messageEvent?.conversationMessageId ?? this.message?.conversationMessageId ?? 0,
+                ...(keyboard ? { keyboard } : {}),
+                ...(attachment ? { attachment } : {}),
             });
-        } else if (text != this.text) {
-            await this.tgCtx.editMessageText(text, {
-                link_preview_options: {
-                    is_disabled: options?.dont_parse_links !== false,
-                },
-                reply_markup: keyboard,
-            });
-        } else if (options?.keyboard) {
-            await this.tgCtx.editMessageReplyMarkup({
-                reply_markup: keyboard,
-            });
+        } catch (e) {
+            global.logger.error(e);
         }
     }
 
-    async editMarkup(keyboard: IKeyboard) {
+    async editMarkup(keyboard: IKeyboard, text?: string) {
         if (!this.messagePayload) {
             return undefined;
         }
@@ -450,28 +518,43 @@ export default class UnifiedMessageContext implements ILocalisator {
         if (!kb) {
             return undefined;
         }
-        return await this.tgCtx.editMessageReplyMarkup({
-            reply_markup: kb,
-        });
+        try {
+            return await this.vk.api.messages.edit({
+                peer_id: this.chatId,
+                message: text ?? "",
+                conversation_message_id: this.messageEvent?.conversationMessageId ?? this.message?.conversationMessageId ?? 0,
+                keyboard: kb,
+            });
+        } catch (e) {
+            global.logger.error(e);
+            return undefined;
+        }
     }
 
     async answer(text: string): Promise<true> {
-        if (!this.messagePayload) {
+        if (!this.messageEvent) {
             return;
         }
-        return await this.tgCtx.answerCallbackQuery(text);
+        try {
+            await this.messageEvent.answer({
+                type: "show_snackbar",
+                text: text ?? "",
+            });
+            return true;
+        } catch {
+            return;
+        }
     }
 
     async isUserAdmin(userId: number): Promise<boolean> {
         try {
-            const res = await this.tgCtx.api.getChatMember(this.chatId, userId);
-            return res.status == "creator" || res.status == "administrator";
-        } catch (e) {
-            if (e.message.includes("CHAT_ADMIN_REQUIRED")) {
-                return false;
-            }
-
-            throw e;
+            const members = (await this.vk.api.messages.getConversationMembers({
+                peer_id: this.chatId,
+            })) as { items?: Array<{ member_id: number; is_admin?: boolean }> };
+            const member = members.items?.find((m) => m.member_id === userId);
+            return member?.is_admin ?? false;
+        } catch {
+            return false;
         }
     }
 
@@ -485,26 +568,24 @@ export default class UnifiedMessageContext implements ILocalisator {
 
     async isUserInChat(userId: number, chatId?: number): Promise<boolean> {
         try {
-            if (chatId) {
-                const isValid = await this.isChatValid(chatId);
-                if (!isValid) {
-                    return false;
-                }
-            }
-
-            const user = await this.tgCtx.api.getChatMember(chatId ?? this.chatId, userId);
-            return user && user.status != "kicked" && user.status != "left";
-        } catch (e) {
-            return !e.description?.includes("member not found");
+            const peerId = chatId ?? this.chatId;
+            const members = (await this.vk.api.messages.getConversationMembers({
+                peer_id: peerId,
+            })) as { items?: Array<{ member_id: number }> };
+            return members.items?.some((m) => m.member_id === userId) ?? false;
+        } catch {
+            return false;
         }
     }
 
     async isChatValid(chatId: number): Promise<boolean> {
         try {
-            const chatInfo = await this.tgCtx.api.getChat(chatId);
-            return !!chatInfo;
-        } catch (e) {
-            return !e.description?.includes("chat not found");
+            await this.vk.api.messages.getConversationMembers({
+                peer_id: chatId,
+            });
+            return true;
+        } catch {
+            return false;
         }
     }
 
@@ -512,28 +593,43 @@ export default class UnifiedMessageContext implements ILocalisator {
         return this.isUserInChat(this.me.id, chatId);
     }
 
-    chatMembersCount(): Promise<number> {
-        return this.tgCtx.api.getChatMemberCount(this.chatId);
+    async chatMembersCount(): Promise<number> {
+        try {
+            const members = (await this.vk.api.messages.getConversationMembers({
+                peer_id: this.chatId,
+            })) as { count?: number };
+            return members.count ?? 0;
+        } catch {
+            return 0;
+        }
     }
 
     hasLinks(): boolean {
-        return this.tgCtx.message?.entities?.some((entity) => entity.type === "text_link");
+        return /https?:\/\/[^\s]+/.test(this.plainText ?? "");
     }
 
-    getLinks(): Array<TextLinkMessageEntity> {
-        return this.tgCtx.message?.entities?.filter((entity) => entity.type === "text_link");
+    getLinks(): Array<{ url: string }> {
+        const links: Array<{ url: string }> = [];
+        const regex = /https?:\/\/[^\s]+/g;
+        let match;
+        while ((match = regex.exec(this.plainText ?? "")) !== null) {
+            links.push({ url: match[0] });
+        }
+        return links;
     }
 
     hasFile(): boolean {
-        return !!this.tgCtx.message?.document;
+        return this.message?.attachments?.some((a) => a.type === "doc") ?? false;
     }
 
     getFileName(): string {
-        return this.tgCtx.message?.document?.file_name;
+        const doc = this.message?.attachments?.find((a) => a.type === "doc") as { doc?: { title?: string } } | undefined;
+        return doc?.doc?.title ?? "";
     }
 
     getFileSize(): number {
-        return this.tgCtx.message?.document?.file_size ?? Number.MAX_VALUE;
+        const doc = this.message?.attachments?.find((a) => a.type === "doc") as { doc?: { size?: number } } | undefined;
+        return doc?.doc?.size ?? Number.MAX_VALUE;
     }
 
     registerTempFile(filePath: string) {
@@ -548,10 +644,21 @@ export default class UnifiedMessageContext implements ILocalisator {
             return this.tmpFile;
         }
 
-        const file = await this.tgCtx.getFile();
+        const doc = this.message?.attachments?.find((a) => a.type === "doc") as { doc?: { url?: string; title?: string } } | undefined;
+        if (!doc?.doc?.url) {
+            throw new Error("No document to download");
+        }
 
-        this.tmpFile = this.localServer ? file.getUrl() : await file.download();
+        const response = await axios.get(doc.doc.url, { responseType: "arraybuffer" });
+        const buffer = Buffer.from(response.data);
+        const ext = path.extname(doc.doc.title ?? ".tmp") || ".tmp";
+        const tmpPath = path.join(
+            process.env.TEMP || "/tmp",
+            `vk_download_${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`
+        );
+        await fs.writeFile(tmpPath, buffer);
 
+        this.tmpFile = tmpPath;
         this.registerTempFile(this.tmpFile);
         return this.tmpFile;
     }
