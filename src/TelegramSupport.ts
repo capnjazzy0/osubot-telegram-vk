@@ -28,6 +28,18 @@ export interface SendOptions {
     dont_parse_links?: boolean;
 }
 
+const MODULE_PREFIX_MAP: Record<string, { display: string; db: string }> = {
+    s:  { display: "Bancho",            db: "bancho" },
+    g:  { display: "Gatari",            db: "gatari" },
+    r:  { display: "Ripple",            db: "ripple" },
+    rr: { display: "Ripple Relax",      db: "ripple" },
+    a:  { display: "Akatsuki",          db: "akatsuki" },
+    ar: { display: "Akatsuki Relax",    db: "akatsuki" },
+    aa: { display: "Akatsuki AutoPilot",db: "akatsuki" },
+    bl: { display: "BeatLeader",        db: "beatleader" },
+    ss: { display: "ScoreSaber",        db: "scoresaber" },
+};
+
 class ReplyToMessage {
     readonly text: string;
     readonly senderId: number;
@@ -410,6 +422,31 @@ export default class UnifiedMessageContext implements ILocalisator {
 
     async send(text: string, options?: SendOptions, replyTo?: number) {
         try {
+            let prefix: string | undefined;
+
+            if (this.messageEvent) {
+                let payload = this.messagePayload ?? "";
+                payload = payload.replace(/^{map\d+}/, "");
+                prefix = payload.split(/\s+/)[0].toLowerCase();
+            } else if (this.text && !this.messagePayload) {
+                prefix = this.text.split(/\s+/)[0].toLowerCase();
+            }
+
+            if (prefix) {
+                const serverInfo = MODULE_PREFIX_MAP[prefix];
+                if (serverInfo) {
+                    const rows = await this.database.all<{ nickname: string }>(
+                        "SELECT nickname FROM users WHERE id = $1 AND LOWER(server) = $2 AND nickname IS NOT NULL LIMIT 1",
+                        [this.senderId, serverInfo.db]
+                    );
+                    let attribution = `@id${this.senderId}`;
+                    if (rows.length > 0) {
+                        attribution += ` | ${serverInfo.display}: ${rows[0].nickname}`;
+                    }
+                    text = `${attribution}\n${text}`;
+                }
+            }
+
             const keyboard = await this.createKeyboard(options?.keyboard);
             let attachment: string | undefined;
 
