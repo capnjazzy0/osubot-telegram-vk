@@ -123,6 +123,13 @@ weather-output =
 lang-set = Язык изменён на {$lang}
 lang-usage = Укажите язык: !lang ru / en / zh / auto
 
+source-no-image = Ответьте на фото или отправьте !source с фото
+source-result =
+    🔍 Поиск по изображению:
+    Yandex: {$yandex}
+    Google: {$google}
+    TinEye: {$tineye}
+
 city-set = Город по умолчанию установлен: {$city}
 city-current = Город по умолчанию: {$city}
 city-none = Город по умолчанию не задан. Используйте !город <название> чтобы задать.

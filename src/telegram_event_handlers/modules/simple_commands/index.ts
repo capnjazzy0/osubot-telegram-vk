@@ -8,6 +8,7 @@ import { Roll } from "./Roll";
 import { Weather } from "./Weather";
 import { Lang } from "./Lang";
 import { City } from "./City";
+import { Source } from "./Source";
 
 export class SimpleCommandsModule extends Module {
     constructor(bot: Bot) {
@@ -15,7 +16,7 @@ export class SimpleCommandsModule extends Module {
 
         this.name = "Simple";
 
-        this.registerCommand([new MapLink(this), new MapStats(this), new BanchoScore(this), new OsuReplay(this), new Roll(this), new Weather(this), new Lang(this), new City(this)]);
+        this.registerCommand([new MapLink(this), new MapStats(this), new BanchoScore(this), new OsuReplay(this), new Roll(this), new Weather(this), new Lang(this), new City(this), new Source(this)]);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -116,6 +116,13 @@ weather-output =
 lang-set = 语言已更改为 {$lang}
 lang-usage = 请指定语言：!lang ru / en / zh / auto
 
+source-no-image = 请回复照片或使用 !source 命令并附带照片
+source-result =
+    🔍 以图搜图：
+    Yandex：{$yandex}
+    Google：{$google}
+    TinEye：{$tineye}
+
 city-set = 默认城市已设置为 {$city}
 city-current = 默认城市：{$city}
 city-none = 尚未设置默认城市。请使用 !city <名称> 进行设置。
