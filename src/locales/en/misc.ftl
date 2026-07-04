@@ -120,11 +120,7 @@ lang-set = Language changed to {$lang}
 lang-usage = Specify a language: !lang ru / en / zh / auto
 
 source-no-image = Reply to a photo or send !source with a photo
-source-result =
-    🔍 Reverse image search:
-    Yandex: {$yandex}
-    Google: {$google}
-    TinEye: {$tineye}
+source-result = 🔍 Reverse image search: {$link}
 
 city-set = Default city set to {$city}
 city-current = Default city: {$city}

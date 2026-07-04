@@ -12,11 +12,9 @@ export class Source extends Command {
             }
 
             const encoded = encodeURIComponent(url);
-            const yandex = `https://yandex.com/images/search?url=${encoded}&rpt=imageview`;
-            const google = `https://images.google.com/searchbyimage?image_url=${encoded}`;
-            const tineye = `https://tineye.com/search?url=${encoded}`;
+            const link = `https://yandex.com/images/search?url=${encoded}&rpt=imageview`;
 
-            await ctx.reply(ctx.tr("source-result", { yandex, google, tineye }), {
+            await ctx.reply(ctx.tr("source-result", { link }), {
                 dont_parse_links: true,
             });
         });
