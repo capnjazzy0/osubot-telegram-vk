@@ -668,10 +668,16 @@ export default class UnifiedMessageContext implements ILocalisator {
     }
 
     getPhotoUrl(): string | undefined {
-        const photo = this.message?.photos?.[0] ?? this.message?.replyMessage?.photos?.[0];
+        const msg = this.message;
+        if (!msg) return undefined;
+
+        const photos = msg.getAttachments('photo');
+        const photo = photos?.[0] ?? msg.replyMessage?.getAttachments('photo')?.[0];
         if (!photo) return undefined;
+
         const sizes = photo.sizes;
-        if (!sizes || sizes.length === 0) return undefined;
+        if (!sizes || sizes.length === 0) return photo.largeSizeUrl;
+
         const largest = sizes.reduce((a, b) => (a.width > b.width ? a : b));
         return largest.url;
     }
